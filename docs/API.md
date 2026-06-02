@@ -6,3 +6,7 @@ After run_agent routes here (from NLU match), before fetching account details:
 - If false → run normal flow (ask age).  
 - Keep everything else—fetch account, etc.—unchanged.  
 - Use existing state for history/context.  
+
+
+
+<img width="437" height="269" alt="image" src="https://github.com/user-attachments/assets/301c9de1-d05d-4184-832a-a4915db1838c" />
