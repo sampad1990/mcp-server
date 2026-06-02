@@ -9,4 +9,56 @@ After run_agent routes here (from NLU match), before fetching account details:
 
 
 
+
+
+
 <img width="437" height="269" alt="image" src="https://github.com/user-attachments/assets/301c9de1-d05d-4184-832a-a4915db1838c" />
+
+
+Option 2​
+Use Intent & Orchestration Agent​
+
+Yes​
+
+Guardrails already implemented​
+
+Reuse existing architectural flow​
+
+Single deployable service (ECS)​
+
+ECS service bypass requires an internal code change​
+
+Tightly coupled; requires coordination with JPMC orchestration team​
+
+No backend needed. API already integrated. JPMC makes the code change​
+
+Medium​
+
+Long-term, depending on whether orchestration team opens access​
+
+---------------------------------------
+
+Option 3​
+Use Intent, Bypass Orchestration Agent​
+
+No​
+
+Separation of responsibilities​
+
+Guardrails at intent agent layer​
+
+3-tier model: intent  orchestrator  A24 supervisor​
+
+Requires JPMC intent agent code change to allow bypass to our performance agent​
+
+Governance questions across two routing layers​
+
+Goes through intent, bypasses orchestration. Owns supervisor agent maintained​
+
+Medium-High​
+
+Recommended Option​
+
+Best governance, decouple campaign builder from tickets; SLM + RAG for smarter orchestration​
+
+
