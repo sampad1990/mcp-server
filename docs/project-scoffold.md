@@ -25,6 +25,47 @@ Work through each step sequentially. After completing each step, run the listed
 **verification commands** and confirm they pass before proceeding to the next step.
 If verification fails, fix the issue before moving on. Report pass/fail for each gate.
 
+**Expected branch flow:**
+```
+main (archived by branching-strategy)
+  └── develop
+        └── feature/scaffold-setup  ← this skill works here
+                                       PR → develop when done
+```
+
+---
+
+## Step 0 — Create Feature Branch
+
+**Action:** Before touching any files, ensure all scaffolding work happens on a dedicated
+feature branch — never directly on `main` or `develop`.
+
+```bash
+# Check the current branch
+git branch --show-current
+
+# If not already on develop, switch to it
+git checkout develop
+git pull origin develop   # sync with remote if it exists
+
+# Create the scaffold feature branch
+git checkout -b feature/scaffold-setup
+```
+
+**Verification — Step 0:**
+```bash
+# Confirm we are on the correct branch
+current=$(git branch --show-current)
+echo "Current branch: $current"
+[ "$current" = "feature/scaffold-setup" ] && echo "PASS: on feature/scaffold-setup" || echo "FAIL: wrong branch — do not proceed"
+
+# Confirm develop exists (was created by branching-strategy skill)
+git branch | grep -q "develop" && echo "PASS: develop branch exists" || echo "WARN: develop not found — run branching-strategy skill first"
+```
+
+If verification fails (not on `feature/scaffold-setup`), stop and fix the branch before continuing.
+If `develop` does not exist, ask the user to run the `/branching-strategy` skill first.
+
 ---
 
 ## Step 1 — Pre-commit Configuration
@@ -231,25 +272,47 @@ EOF
 
 ---
 
-## Step 6 — Stage and Summarise
+## Step 6 — Commit, Push, and Open PR
 
 **Action:** After all verifications pass:
 
 1. Run `git status` to list changed and new files
-2. Report a summary table:
+2. Confirm we are still on `feature/scaffold-setup`
+3. Report a summary table:
 
 | Step | Deliverable | Status |
 |------|-------------|--------|
+| 0 | Feature branch `feature/scaffold-setup` from `develop` | ✓ |
 | 1 | `.pre-commit-config.yaml` | ✓ |
 | 2 | 5 × package `README.md` | ✓ |
 | 3 | `scripts/run_agent.py` | ✓ |
 | 4 | Root `README.md` updated | ✓ |
 | 5 | `.env.example` annotated | ✓ |
 
-3. Suggest the commit command (do NOT commit automatically):
+4. Suggest the commit and PR commands (do NOT execute automatically — confirm with user first):
+
 ```bash
+# Stage all scaffolding files
 git add .pre-commit-config.yaml scripts/run_agent.py README.md .env.example \
         src/agents/README.md src/tools/README.md src/skills/README.md \
         src/prompts/README.md tests/README.md
+
+# Commit on the feature branch
 git commit -m "feat(scaffold): add pre-commit hooks, package READMEs, and 5-min onboarding"
+
+# Push feature branch
+git push -u origin feature/scaffold-setup
+```
+
+5. After the user confirms the push, suggest opening a PR:
+   - **From:** `feature/scaffold-setup`
+   - **Into:** `develop` (NOT main)
+   - **Title:** `feat(scaffold): add pre-commit hooks, package READMEs, and 5-min onboarding`
+
+**Branch state after this skill completes:**
+```
+main          ← unchanged (existing code preserved)
+  archive/pre-prod-baseline  ← frozen snapshot (from branching-strategy)
+  develop     ← integration branch (from branching-strategy)
+    feature/scaffold-setup  ← PR open → develop
 ```
